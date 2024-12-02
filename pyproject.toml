@@ -41,7 +41,7 @@ classifiers = [
     "Topic :: Home Automation"
 ]
 dependencies = [
-    "tomli==2.0.1",
+    "tomli==2.2.1",
 ]
 
 [tool.hatch.build]
