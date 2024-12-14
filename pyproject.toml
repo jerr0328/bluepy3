@@ -44,6 +44,14 @@ dependencies = [
     "tomli==2.2.1",
 ]
 
+[project.urls]
+"Homepage" = "https://github.com/Mausy5043/bluepy3"
+"Bug Tracker" = "https://github.com/Mausy5043/bluepy3/issues"
+
+[project.scripts]
+blescan = 'bluepy3.blescan:main'
+helpermaker = 'bluepy3.helpermaker:main'
+
 [tool.hatch.build]
 include = [
     "bluepy3/*.py",
@@ -58,14 +66,6 @@ include = [
 
 [tool.hatch.build.targets.wheel.force-include]
 "./pyproject.toml" = "bluepy3/pyproject.toml"
-
-[project.scripts]
-blescan = 'bluepy3.blescan:main'
-helpermaker = 'bluepy3.helpermaker:main'
-
-[project.urls]
-"Homepage" = "https://github.com/Mausy5043/bluepy3"
-"Bug Tracker" = "https://github.com/Mausy5043/bluepy3/issues"
 
 [tool.autopep8]
 max_line_length = 98
