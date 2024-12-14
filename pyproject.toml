@@ -72,25 +72,43 @@ max_line_length = 98
 in-place = true
 recursive = true
 aggressive = 2
-ignore = "E203"
+ignore = [
+    # whitespace before ':': is enforced by black
+    "E203"
+    ]
 
 [tool.bandit]
-skips = ["B101", "B603"]
-# ,B601
+skips = [
+    # assert used
+    "B101",
+    # possible shell injection via Paramiko call
+    # "B601",
+    # subprocess without shell equals true
+    "B603",
+    ]
 
 [tool.black]
 line-length = 98
-target-version = ["py39", "py310", "py311", "py312"]
+target-version = ["py39", "py310", "py311", "py312", "py313"]
+
+[tool.isort]
+profile = "black"
+py_version="auto"
 
 [tool.flake8]
 max_line_length = 98
-ignore = ["E203", "E501", "C901", "W503"]
-
-[tool.pydocstyle]
-inherit = false
-convention = "google"
-match = ".*\\.py"
-add-ignore = "D"
+ignore = [
+    # function too complex: is what we do ;-)
+    "C901",
+    # whitespace before ':': is enforced by black
+    "E203",
+    # line too long: is checked by pylint
+    "E501",
+    # do not use bare 'except':  don't care
+    "E722",
+    # line break before binary: is against policy.
+    "W503",
+    ]
 
 [tool.mypy]
 warn_return_any = true
@@ -104,3 +122,12 @@ disallow_untyped_decorators = true
 disallow_untyped_calls = true
 no_implicit_reexport = true
 extra_checks = true
+
+[tool.pydocstyle]
+inherit = false
+convention = "google"
+match = ".*\\.py"
+add-ignore = "D"
+
+
+# pylint is controlled by .pylintrc
