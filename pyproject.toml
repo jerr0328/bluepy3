@@ -14,7 +14,7 @@ name = "bluepy3"
 version = "2.17.1"  # latest test version
 description = "A Python3 module for interfacing with Bluetooth LE devices on Linux."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = "MIT"
 # license-files = { paths = ["LICENSE"] }
 authors = [
@@ -32,11 +32,11 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: C",
     "Topic :: Home Automation"
 ]
