@@ -14,9 +14,9 @@ This is a Python3 library to allow communication with Bluetooth Low Energy devic
 
 Please be aware that this is not a beginners tool. Some experience with Linux CLI, Python3 and BT/BLE is expected.
 
-Development of this package is done in Python 3.11. The package is considered forwards compatible at least upto Python 3.12 and probably also beyond. Backwards compatibility is not guaranteed; if it works on Python 3.9 or before consider yourself lucky. [Python versions that are end-of-life](https://devguide.python.org/versions/) are not supported.
+Development of this package is done in Python 3.12. The package is considered forwards compatible at least upto Python 3.12 and probably also beyond. Backwards compatibility is not guaranteed; if it works on Python 3.9 or before consider yourself lucky. [Python versions that are end-of-life](https://devguide.python.org/versions/) are not supported.
 
-The package has been extensively tested on a Raspberry Pi 3 Model B+ (aarch64) with Debian GNU Linux 11 w/ Python 3.9.* AND with Debian GNU Linux 12 /w Python 3.11.*.
+The package has been extensively tested on a Raspberry Pi 3 Model B+ (aarch64) with Debian GNU Linux 11 w/ Python 3.9.* AND with Debian GNU Linux 12 /w Python 3.11.* and 3.12.*.
 
 The code needs an executable `bluepy3-helper` which is compiled from C source automatically
 when first used (see below).
