@@ -310,8 +310,7 @@ class ScanEntry:
     def getScanData(self):
         """Return list of tuples [(tag, description, value)]"""
         return [
-            (sdid, self.getDescription(sdid), self.getValueText(sdid))
-            for sdid in self.scanData.keys()  # pylint: disable=consider-iterating-dictionary
+            (sdid, self.getDescription(sdid), self.getValueText(sdid)) for sdid in self.scanData
         ]
 
     def getValue(self, sdid: int):
