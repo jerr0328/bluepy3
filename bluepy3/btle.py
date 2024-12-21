@@ -488,8 +488,8 @@ class Bluepy3Helper:
             DBG(f"    -btle- Running {HELPER_PATH}")
             self._lineq = Queue()
             self._mtu = 0
-            # pylint: disable-next=consider-using-with
-            self._stderr = open(os.devnull, "w")  # pylint: disable=unspecified-encoding
+            # pylint: disable-next=consider-using-with, disable-next=unspecified-encoding
+            self._stderr = open(os.devnull, "w")  # noqa: SIM115 (not using a context manager here)
             args: list[str] = [HELPER_PATH]
             if iface is not None:
                 args.append(str(iface))
