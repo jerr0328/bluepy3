@@ -557,7 +557,7 @@ class Bluepy3Helper:
                 return resp
 
             # anything else raises an error or retries
-            if respType == "stat":
+            if respType == "stat":  # noqa: SIM102
                 if "state" in resp and len(resp["state"]) > 0 and resp["state"][0] == "disc":
                     self._stopHelper()
                     raise BTLEConnectError("Device disconnected", resp)
