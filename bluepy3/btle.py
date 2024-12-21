@@ -843,16 +843,14 @@ class Peripheral(Bluepy3Helper):
             ):
                 raise BTLEManagementError("Malformed local OOB data (flags).")
             flags = data[50:51]
-            # fmt: off
             return {
-                "Address": "".join(["%02X" % struct.unpack("<B", c)[0] for c in address]),      # pylint: disable=C0209
-                "Type": "".join(["%02X" % struct.unpack("<B", c)[0] for c in address_type]),    # pylint: disable=C0209
-                "Role": "".join(["%02X" % struct.unpack("<B", c)[0] for c in role]),            # pylint: disable=C0209
-                "C_256": "".join(["%02X" % struct.unpack("<B", c)[0] for c in confirm]),        # pylint: disable=C0209
-                "R_256": "".join(["%02X" % struct.unpack("<B", c)[0] for c in random]),         # pylint: disable=C0209
-                "Flags": "".join(["%02X" % struct.unpack("<B", c)[0] for c in flags]),          # pylint: disable=C0209
+                "Address": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in address]),
+                "Type": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in address_type]),
+                "Role": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in role]),
+                "C_256": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in confirm]),
+                "R_256": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in random]),
+                "Flags": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in flags]),
             }
-            # fmt: on
         return {}
 
     def getMTU(self) -> int:
