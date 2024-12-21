@@ -129,5 +129,27 @@ convention = "google"
 match = ".*\\.py"
 add-ignore = "D"
 
+[tool.ruff]
+fix = true
+indent-width = 4
+line-length = 98
+output-format = "concise"
+include = ["pyproject.toml", "bin/**/*.py"]
+
+[tool.ruff.format]
+indent-style = "space"
+line-ending = "auto"
+quote-style = "preserve"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "SIM", "UP", "W"]
+ignore = [
+    # line too long: formatter is leading
+    "E501"
+    ]
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
 
 # pylint is controlled by .pylintrc
