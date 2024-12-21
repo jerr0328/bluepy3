@@ -69,9 +69,7 @@ def get_btctl_version() -> str:
     args: list[str] = ["bluetoothctl", "version"]
     try:
         _exit_code = (
-            subprocess.check_output(
-                args, shell=False, encoding="utf-8", timeout=5.0
-            )  # nosec B603
+            subprocess.check_output(args, shell=False, encoding="utf-8", timeout=5.0)  # nosec B603
             .strip("\n")
             .strip("'")
         ).split()
@@ -139,7 +137,7 @@ def build_helper() -> None:
         verfile.write(f'#define VERSION_STRING "{BUILD_VERSION}"\n')
 
     # read the Makefile
-    with open(MAKEFILE, "r", encoding="utf-8") as makefile:
+    with open(MAKEFILE, encoding="utf-8") as makefile:
         lines: list[str] = makefile.readlines()
     # write the Makefile while inserting the desired BLUEZ_VERSION
     with open(MAKEFILE, "w", encoding="utf-8") as makefile:
