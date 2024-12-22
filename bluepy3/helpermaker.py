@@ -20,9 +20,9 @@ import subprocess  # nosec: B404
 import sys
 
 try:
-    import tomllib as tl
+    import tomllib as tl  # type: ignore[import-not-found]
 except ModuleNotFoundError:
-    import tomli as tl  # type: ignore[no-redef]
+    import tomli as tl  # required by python <3.11
 
 # We distinguish between three versions:
 # VERSION
