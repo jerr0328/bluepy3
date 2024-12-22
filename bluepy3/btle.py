@@ -17,7 +17,12 @@ import time
 from collections.abc import Generator
 from queue import Empty, Queue
 from threading import Thread
-from typing import Any, Self, TextIO
+from typing import Any, TextIO
+
+if sys.version_info >= (3, 11):
+    from typing import Self  # code is unreachable in <3.11
+else:
+    from typing_extensions import Self  # code is unreachable in >=3.11
 
 Debugging = False
 SCRIPT_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)))
