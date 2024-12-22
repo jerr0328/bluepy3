@@ -11,7 +11,7 @@ build-backend = "hatchling.build"
 [project]
 name = "bluepy3"
 # version = "2.16.1"  # latest/current distribution version
-version = "2.17.1"  # latest test version
+version = "2.17.2"  # latest test version
 description = "A Python3 module for interfacing with Bluetooth LE devices on Linux."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -68,6 +68,7 @@ include = [
 "./pyproject.toml" = "bluepy3/pyproject.toml"
 
 [tool.autopep8]
+python_version = "3.9"
 max_line_length = 98
 in-place = true
 recursive = true
@@ -89,11 +90,12 @@ skips = [
 
 [tool.black]
 line-length = 98
+required-version = ">=3.9"
 target-version = ["py39", "py310", "py311", "py312", "py313"]
 
 [tool.isort]
 profile = "black"
-py_version="auto"
+py_version = "39"
 
 [tool.flake8]
 max_line_length = 98
@@ -111,6 +113,7 @@ ignore = [
     ]
 
 [tool.mypy]
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 warn_redundant_casts = true
@@ -130,6 +133,7 @@ match = ".*\\.py"
 add-ignore = "D"
 
 [tool.ruff]
+target-version = "py39"
 fix = true
 indent-width = 4
 line-length = 98
