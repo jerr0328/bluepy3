@@ -20,3 +20,4 @@ dependencies:
   - pipdeptree
   - pre-commit
   - pylint
+  - typing-extensions
