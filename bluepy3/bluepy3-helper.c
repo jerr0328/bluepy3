@@ -665,8 +665,18 @@ static void char_desc_cb(uint8_t status, GSList *descriptors, void *user_data) {
   resp_end();
 }
 
+// Define a compile-time constant for the maximum array size
+// Adjust this value based on the maximum expected length of the data
+#define kMaxValueSize 512
+
 static void char_read_cb(guint8 status, const guint8 *pdu, guint16 plen, gpointer user_data) {
-  uint8_t value[plen];
+  if (plen > kMaxValueSize) {
+    DBG("PDU length exceeds maximum value size");
+    resp_error(err_DECODING);
+    return;
+  }
+
+  uint8_t value[kMaxValueSize];  // Use the fixed-size array
   ssize_t vlen;
 
   if (status != 0) {
