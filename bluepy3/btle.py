@@ -9,7 +9,8 @@
 import binascii
 import json
 import os
-import signal
+
+# import signal
 import struct
 import subprocess  # nosec: B404
 import sys
@@ -58,10 +59,10 @@ ADDR_TYPE_RANDOM = "random"
 BTLE_TIMEOUT = 32.1
 
 
-def preexec_function() -> None:
-    # Ignore the SIGINT signal by setting the handler to the standard
-    # signal handler SIG_IGN.
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
+# def preexec_function() -> None:
+#     # Ignore the SIGINT signal by setting the handler to the standard
+#     # signal handler SIG_IGN.
+#     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
 def DBG(*args) -> None:
@@ -498,15 +499,15 @@ class Bluepy3Helper:
             if iface is not None:
                 args.append(str(iface))
 
-            # FIXME: should not be using preexec_fn
-            # pylint: disable-next=consider-using-with, disable-next=W1509
+            # pylint: disable-next=consider-using-with
             self._helper = subprocess.Popen(
                 args,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=self._stderr,
                 universal_newlines=True,
-                preexec_fn=preexec_function,
+                # preexec_fn=preexec_function,  # should not be using preexec_fn; pylint W1509
+                start_new_session=True,  # Replaces preexec_fn
             )
             t = Thread(target=self._readToQueue)
             t.daemon = True  # don't wait for it to exit
