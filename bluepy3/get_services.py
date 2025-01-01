@@ -74,9 +74,7 @@ def get_table_rows(html=None):
     # service_table=soup.find("table",
     #                         attrs={"summary":"Documents This library contains Services."})
     try:
-        for row in biggest_table.find_all(
-            "tr"
-        ):  # noqa : "Cannot find reference 'find_all' in 'Sized | int'"
+        for row in biggest_table.find_all("tr"):  # noqa : "Cannot find reference 'find_all' in 'Sized | int'"
             cols = row.find_all("td")
             cols = [ele.text.strip() for ele in cols]
             outrow = [ele for ele in cols if ele]  # Get rid of empty values

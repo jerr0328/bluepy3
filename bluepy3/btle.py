@@ -9,14 +9,21 @@
 import binascii
 import json
 import os
-import signal
+
+# import signal
 import struct
 import subprocess  # nosec: B404
 import sys
 import time
+from collections.abc import Generator
 from queue import Empty, Queue
 from threading import Thread
-from typing import Any, Generator, Self, TextIO
+from typing import Any, TextIO
+
+if sys.version_info >= (3, 11):
+    from typing import Self  # code is unreachable in <3.11
+else:
+    from typing_extensions import Self  # code is unreachable in >=3.11
 
 Debugging = False
 SCRIPT_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)))
@@ -52,10 +59,10 @@ ADDR_TYPE_RANDOM = "random"
 BTLE_TIMEOUT = 32.1
 
 
-def preexec_function() -> None:
-    # Ignore the SIGINT signal by setting the handler to the standard
-    # signal handler SIG_IGN.
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
+# def preexec_function() -> None:
+#     # Ignore the SIGINT signal by setting the handler to the standard
+#     # signal handler SIG_IGN.
+#     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
 def DBG(*args) -> None:
@@ -309,8 +316,7 @@ class ScanEntry:
     def getScanData(self):
         """Return list of tuples [(tag, description, value)]"""
         return [
-            (sdid, self.getDescription(sdid), self.getValueText(sdid))
-            for sdid in self.scanData.keys()  # pylint: disable=consider-iterating-dictionary
+            (sdid, self.getDescription(sdid), self.getValueText(sdid)) for sdid in self.scanData
         ]
 
     def getValue(self, sdid: int):
@@ -487,21 +493,21 @@ class Bluepy3Helper:
             DBG(f"    -btle- Running {HELPER_PATH}")
             self._lineq = Queue()
             self._mtu = 0
-            # pylint: disable-next=consider-using-with
-            self._stderr = open(os.devnull, "w")  # pylint: disable=unspecified-encoding
+            # pylint: disable-next=consider-using-with, disable-next=unspecified-encoding
+            self._stderr = open(os.devnull, "w")  # noqa: SIM115 (not using a context manager here)
             args: list[str] = [HELPER_PATH]
             if iface is not None:
                 args.append(str(iface))
 
-            # FIXME: should not be using preexec_fn
-            # pylint: disable-next=consider-using-with, disable-next=W1509
+            # pylint: disable-next=consider-using-with
             self._helper = subprocess.Popen(
                 args,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=self._stderr,
                 universal_newlines=True,
-                preexec_fn=preexec_function,
+                # preexec_fn=preexec_function,  # should not be using preexec_fn; pylint W1509
+                start_new_session=True,  # Replaces preexec_fn
             )
             t = Thread(target=self._readToQueue)
             t.daemon = True  # don't wait for it to exit
@@ -556,7 +562,7 @@ class Bluepy3Helper:
                 return resp
 
             # anything else raises an error or retries
-            if respType == "stat":
+            if respType == "stat":  # noqa: SIM102
                 if "state" in resp and len(resp["state"]) > 0 and resp["state"][0] == "disc":
                     self._stopHelper()
                     raise BTLEConnectError("Device disconnected", resp)
@@ -843,16 +849,14 @@ class Peripheral(Bluepy3Helper):
             ):
                 raise BTLEManagementError("Malformed local OOB data (flags).")
             flags = data[50:51]
-            # fmt: off
             return {
-                "Address": "".join(["%02X" % struct.unpack("<B", c)[0] for c in address]),      # pylint: disable=C0209
-                "Type": "".join(["%02X" % struct.unpack("<B", c)[0] for c in address_type]),    # pylint: disable=C0209
-                "Role": "".join(["%02X" % struct.unpack("<B", c)[0] for c in role]),            # pylint: disable=C0209
-                "C_256": "".join(["%02X" % struct.unpack("<B", c)[0] for c in confirm]),        # pylint: disable=C0209
-                "R_256": "".join(["%02X" % struct.unpack("<B", c)[0] for c in random]),         # pylint: disable=C0209
-                "Flags": "".join(["%02X" % struct.unpack("<B", c)[0] for c in flags]),          # pylint: disable=C0209
+                "Address": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in address]),
+                "Type": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in address_type]),
+                "Role": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in role]),
+                "C_256": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in confirm]),
+                "R_256": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in random]),
+                "Flags": "".join([f"{struct.unpack('<B', c)[0]:02X}" for c in flags]),
             }
-            # fmt: on
         return {}
 
     def getMTU(self) -> int:
