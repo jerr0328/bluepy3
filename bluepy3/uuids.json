@@ -101,6 +101,11 @@
       "Battery Level"
     ],
     [
+      10778,
+      "battery_level_status",
+      "Battery Level Status"
+    ],
+    [
       10825,
       "blood_pressure_feature",
       "Blood Pressure Feature"
