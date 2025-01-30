@@ -921,7 +921,21 @@ class Peripheral(Bluepy3Helper):
 
     def pair(self) -> tuple[str, Any]:
         self._writeCmd("pair\n")
-        resp = self._getResp(["mgmt"])
+        # resp = self._getResp(["mgmt"])
+        while True:
+            # allow device to update MTU before pairing
+            resp = self._getResp(["mgmt", "stat"])
+            respType = resp["rsp"][0]
+            if respType == "stat":
+                mtu_list = resp.get("mtu", [])
+                if mtu_list:
+                    _mtu = int(mtu_list[0])
+                    if self._mtu != _mtu:
+                        self._mtu = _mtu
+                        DBG(f"    -btle- New MTU: {self._mtu}")
+            elif respType == "mgmt":
+                break
+
         if resp["code"][0] != "success":
             raise BTLEManagementError("Pair failed.")
         addr = ":".join([f"{b:02X}" for b in resp["addr"][0]])
