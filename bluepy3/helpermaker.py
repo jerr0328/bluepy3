@@ -161,7 +161,7 @@ def build_helper() -> None:
                 err_out: str = e.output.decode("utf-8")
                 _LOGGER.error(f"Output was:\n    {err_out}")
                 _LOGGER.info(
-                    f"Failed to compile bluepy3-helper version {BUILD_VERSION}.Exiting install."
+                    f"Failed to compile bluepy3-helper version {BUILD_VERSION}.\nExiting install."
                 )
                 sys.exit(1)
             _LOGGER.info(f"Returned message:\n{msgs.decode(encoding='utf-8')}")
