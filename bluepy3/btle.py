@@ -82,6 +82,8 @@ def DBG(*args) -> None:
             LOGGER.level = logging.DEBUG
             LOGGER.debug("bluepy3 debugging started.")
         msg: str = " ".join([str(a) for a in args])
+        if msg.count("hnd") > 2 and msg.count("uuid") > 2:
+            msg = msg.replace("; hnd", ";\nhnd")
         LOGGER.debug(f"{msg}")
 
 
