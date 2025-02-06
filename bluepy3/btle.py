@@ -74,11 +74,6 @@ logging.basicConfig(
 LOGGER: logging.Logger = logging.getLogger(__name__)
 LOGGER.info("Starting bluepy3")
 
-# def preexec_function() -> None:
-#     # Ignore the SIGINT signal by setting the handler to the standard
-#     # signal handler SIG_IGN.
-#     signal.signal(signal.SIGINT, signal.SIG_IGN)
-
 
 def DBG(*args) -> None:
     if Debugging:
