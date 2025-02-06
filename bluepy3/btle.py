@@ -9,6 +9,8 @@
 import binascii
 import json
 import os
+import logging
+import logging.handlers
 
 # import signal
 import struct
@@ -58,6 +60,19 @@ ADDR_TYPE_RANDOM = "random"
 
 BTLE_TIMEOUT = 32.1
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.handlers.SysLogHandler(
+            address="/dev/log",
+            facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+        )
+    ],
+)
+LOGGER: logging.Logger = logging.getLogger(__name__)
+LOGGER.info("Starting bluepy3")
 
 # def preexec_function() -> None:
 #     # Ignore the SIGINT signal by setting the handler to the standard
@@ -67,8 +82,12 @@ BTLE_TIMEOUT = 32.1
 
 def DBG(*args) -> None:
     if Debugging:
+        if len(LOGGER.handlers) == 0:
+            LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+            LOGGER.level = logging.DEBUG
+            LOGGER.debug("bluepy3 debugging started.")
         msg: str = " ".join([str(a) for a in args])
-        print(f"{msg}")
+        LOGGER.debug(f"{msg}")
 
 
 # Exceptions
