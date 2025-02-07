@@ -8,11 +8,9 @@
 
 import binascii
 import json
-import os
 import logging
 import logging.handlers
-
-# import signal
+import os
 import struct
 import subprocess  # nosec: B404
 import sys
