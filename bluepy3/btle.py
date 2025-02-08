@@ -8,9 +8,9 @@
 
 import binascii
 import json
+import logging
+import logging.handlers
 import os
-
-# import signal
 import struct
 import subprocess  # nosec: B404
 import sys
@@ -58,17 +58,31 @@ ADDR_TYPE_RANDOM = "random"
 
 BTLE_TIMEOUT = 32.1
 
-
-# def preexec_function() -> None:
-#     # Ignore the SIGINT signal by setting the handler to the standard
-#     # signal handler SIG_IGN.
-#     signal.signal(signal.SIGINT, signal.SIG_IGN)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.handlers.SysLogHandler(
+            address="/dev/log",
+            facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+        )
+    ],
+)
+LOGGER: logging.Logger = logging.getLogger(__name__)
+LOGGER.info("Starting bluepy3")
 
 
 def DBG(*args) -> None:
     if Debugging:
+        if len(LOGGER.handlers) == 0:
+            LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+            LOGGER.level = logging.DEBUG
+            LOGGER.debug("bluepy3 debugging started.")
         msg: str = " ".join([str(a) for a in args])
-        print(f"{msg}")
+        if msg.count("hnd") > 2 and msg.count("uuid") > 2:
+            msg = msg.replace("; hnd", ";\nhnd")
+        LOGGER.debug(f"{msg}")
 
 
 # Exceptions
@@ -921,7 +935,21 @@ class Peripheral(Bluepy3Helper):
 
     def pair(self) -> tuple[str, Any]:
         self._writeCmd("pair\n")
-        resp = self._getResp(["mgmt"])
+        # resp = self._getResp(["mgmt"])
+        while True:
+            # allow device to update MTU before pairing
+            resp = self._getResp(["mgmt", "stat"])
+            respType = resp["rsp"][0]
+            if respType == "stat":
+                mtu_list = resp.get("mtu", [])
+                if mtu_list:
+                    _mtu = int(mtu_list[0])
+                    if self._mtu != _mtu:
+                        self._mtu = _mtu
+                        DBG(f"    -btle- New MTU: {self._mtu}")
+            elif respType == "mgmt":
+                break
+
         if resp["code"][0] != "success":
             raise BTLEManagementError("Pair failed.")
         addr = ":".join([f"{b:02X}" for b in resp["addr"][0]])
