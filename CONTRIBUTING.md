@@ -24,8 +24,8 @@ When you want to make changes, the best way to do that is by creating a [feature
 
 ### Formatting and Coding Style
  * We use [`black`](https://pypi.org/project/black/).
-Code style formatting of all commits must adhere to `black --line-length 98`.
- * Please use `pylint` with this project's `.pylintrc` and `flake8` and `pydocstyle` using the project's `tox.ini` to discover suggestions for code improvement.
+Code style formatting of all commits must adhere to `ruff` running with settings from `pyproject.toml`.
+ * Please use `pylint` with this project's `.pylintrc` and `ruff`, `flake8` and `pydocstyle` using the project's `pyproject.toml` to discover suggestions for code improvement.
  Since the code isn't perfect you are free to ignore any suggestions by the linters that are unrelated to your changes. However, you are also welcome to fix those suggestions if you want ;-)
  * For C, C++ sources we prefer to use [`cpplint`](https://pypi.org/project/cpplint/) for linting and [`clang-format`](https://pypi.org/project/clang-format/) to correct code formatting.
  Here too we use a line length of <= 98.
