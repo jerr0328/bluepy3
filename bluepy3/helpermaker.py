@@ -12,12 +12,18 @@ Usage:
 """
 
 import argparse
-import logging.handlers
 import os
 import platform
 import shlex
 import subprocess  # nosec: B404
 import sys
+
+LOG2JOURNAL: bool = True
+try:
+    import logging
+    import logging.handlers
+except ImportError:
+    LOG2JOURNAL = False
 
 try:
     import tomllib as tl  # type: ignore[import-not-found]
@@ -49,19 +55,35 @@ MAKEFILE: str = f"{APP_ROOT}/Makefile"
 VERSION_H: str = f"{APP_ROOT}/version.h"
 PYPROJECT_TOML: str = f"{APP_ROOT}/pyproject.toml"
 
-# Configure the logging module
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[
-        logging.handlers.SysLogHandler(
-            address="/dev/log", facility=logging.handlers.SysLogHandler.LOG_DAEMON
-        )
-    ],
-)
+if LOG2JOURNAL:
+    # Configure the logging module
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[
+            logging.handlers.SysLogHandler(
+                address="/dev/log", facility=logging.handlers.SysLogHandler.LOG_DAEMON
+            )
+        ],
+    )
+    _LOGGER = logging.getLogger(__name__)
 
-_LOGGER = logging.getLogger(__name__)
+
+def LOGGER(msg: str, lvl: str) -> None:
+    if LOG2JOURNAL:
+        if msg.count("hnd") > 2 and msg.count("uuid") > 2:
+            msg = msg.replace("; hnd", ";\nhnd")
+        if lvl == "debug":
+            _LOGGER.debug(f"{msg}")
+        if lvl == "info":
+            _LOGGER.info(f"{msg}")
+        if lvl == "warning":
+            _LOGGER.warning(f"{msg}")
+        if lvl == "error":
+            _LOGGER.error(f"{msg}")
+        else:
+            print(f"{msg}")
 
 
 def get_btctl_version() -> str:
@@ -108,7 +130,7 @@ def get_helper_version() -> str:
         _exit_code = str(exc.output.split("\n")[0])
         _exit_code = _exit_code.replace("# ", "")
     except FileNotFoundError:
-        _LOGGER.info("Helper executable not found")
+        LOGGER("Helper executable not found", "info")
     return _exit_code
 # fmt: on
 
@@ -147,28 +169,29 @@ def build_helper() -> None:
             makefile.write(line)
     if platform.system().lower() == "linux":
         # Windows and macOS are not supported
-        _LOGGER.info("*** Building bluepy3-helper")
+        LOGGER("*** Building bluepy3-helper", "info")
         for cmd in [f"make -C {APP_ROOT} clean", f"make {DEBUG} -C {APP_ROOT} -j1"]:
-            _LOGGER.info(f"Execute {cmd}")
+            LOGGER(f"Execute {cmd}", "info")
             msgs: bytes = b""
             try:
                 msgs = subprocess.check_output(  # noqa: F841  # pylint: disable=unused-variable
                     shlex.split(cmd), stderr=subprocess.STDOUT
                 )  # nosec: B603
             except subprocess.CalledProcessError as e:
-                _LOGGER.error(f"Command was:\n    {repr(cmd)} in {os.getcwd()}")
-                _LOGGER.error(f"Return code was\n    {e.returncode}")
+                LOGGER(f"Command was:\n    {repr(cmd)} in {os.getcwd()}", "error")
+                LOGGER(f"Return code was\n    {e.returncode}", "error")
                 err_out: str = e.output.decode("utf-8")
-                _LOGGER.error(f"Output was:\n    {err_out}")
-                _LOGGER.info(
-                    f"Failed to compile bluepy3-helper version {BUILD_VERSION}.\nExiting install."
+                LOGGER(f"Output was:\n    {err_out}", "error")
+                LOGGER(
+                    f"Failed to compile bluepy3-helper version {BUILD_VERSION}.\nExiting install.",
+                    "info",
                 )
                 sys.exit(1)
-            _LOGGER.info(f"Returned message:\n{msgs.decode(encoding='utf-8')}")
+            LOGGER(f"Returned message:\n{msgs.decode(encoding='utf-8')}", "info")
     else:
-        _LOGGER.warning("*** Skipping build of bluepy3-helper")
-        _LOGGER.warning("*** Windows and macOS are not supported")
-    _LOGGER.info("*** Finished building bluepy3-helper")
+        LOGGER("*** Skipping build of bluepy3-helper", "warning")
+        LOGGER("*** Windows and macOS are not supported", "warning")
+    LOGGER("*** Finished building bluepy3-helper", "info")
 
 
 def make_helper(build: str = "installed") -> None:
@@ -179,10 +202,10 @@ def make_helper(build: str = "installed") -> None:
     if build in SUPPORTED_BUILDS:
         BLUEZ_VERSION = build
         BUILD_VERSION = f"{VERSION}-{build}"
-        _LOGGER.info(f"Building helper version {BUILD_VERSION} in {HERE}")
+        LOGGER(f"Building helper version {BUILD_VERSION} in {HERE}", "info")
         build_helper()
     else:
-        _LOGGER.error(f"Version {build} is not supported.")
+        LOGGER(f"Version {build} is not supported.", "error")
         raise RuntimeError(
             f"Version {build} is not supported.\nSupported versions are: {SUPPORTED_BUILDS}"
         )
