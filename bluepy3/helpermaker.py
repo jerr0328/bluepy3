@@ -67,11 +67,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[
-        logging.handlers.SysLogHandler(
-            address="/dev/log", facility=logging.handlers.SysLogHandler.LOG_DAEMON
-        )
-    ],
+    handlers=handlers,
 )
 
 _LOGGER = logging.getLogger(__name__)
