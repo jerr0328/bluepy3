@@ -58,16 +58,24 @@ ADDR_TYPE_RANDOM = "random"
 
 BTLE_TIMEOUT = 32.1
 
+handlers = []
+try:
+    handlers = (
+        [
+            logging.handlers.SysLogHandler(
+                address="/dev/log",
+                facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+            )
+        ],
+    )
+except Exception:
+    pass
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[
-        logging.handlers.SysLogHandler(
-            address="/dev/log",
-            facility=logging.handlers.SysLogHandler.LOG_DAEMON,
-        )
-    ],
+    handlers=handlers,
 )
 LOGGER: logging.Logger = logging.getLogger(__name__)
 LOGGER.info("Starting bluepy3")

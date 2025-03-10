@@ -50,6 +50,19 @@ VERSION_H: str = f"{APP_ROOT}/version.h"
 PYPROJECT_TOML: str = f"{APP_ROOT}/pyproject.toml"
 
 # Configure the logging module
+handlers = []
+try:
+    handlers = (
+        [
+            logging.handlers.SysLogHandler(
+                address="/dev/log",
+                facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+            )
+        ],
+    )
+except Exception:
+    pass
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
