@@ -74,7 +74,9 @@ def get_btctl_version() -> str:
             .strip("'")
         ).split()
     except FileNotFoundError:
-        return "not installed"
+        _exit_code = "not installed"
+    except subprocess.CalledProcessError as exc:
+        _exit_code = str(exc.output.split("\n")[0])
     return f"{_exit_code[1]}"
 
 
