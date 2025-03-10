@@ -65,6 +65,7 @@ try:
             logging.handlers.SysLogHandler(
                 address="/dev/log",
                 facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+                handlers=handlers,
             )
         ],
     )
