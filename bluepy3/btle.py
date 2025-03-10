@@ -7,6 +7,7 @@
 """Bluetooth Low Energy Python3 interface"""
 
 import binascii
+import contextlib
 import json
 import logging
 import logging.handlers
@@ -58,18 +59,16 @@ ADDR_TYPE_RANDOM = "random"
 
 BTLE_TIMEOUT = 32.1
 
-handlers = []
-try:
-    handlers = (
-        [
-            logging.handlers.SysLogHandler(
-                address="/dev/log",
-                facility=logging.handlers.SysLogHandler.LOG_DAEMON,
-            )
-        ],
-    )
-except Exception:
-    pass
+handlers: list = []
+
+with contextlib.suppress(Exception):
+    handlers = [
+        logging.handlers.SysLogHandler(
+            address="/dev/log",
+            facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+        ),
+    ]
+
 
 logging.basicConfig(
     level=logging.INFO,
