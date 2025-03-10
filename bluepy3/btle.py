@@ -8,6 +8,8 @@
 
 import binascii
 import json
+import logging
+import logging.handlers
 import os
 import struct
 import subprocess  # nosec: B404
@@ -17,13 +19,6 @@ from collections.abc import Generator
 from queue import Empty, Queue
 from threading import Thread
 from typing import Any, TextIO
-
-LOG2JOURNAL: bool = True
-try:
-    import logging
-    import logging.handlers
-except ImportError:
-    LOG2JOURNAL = False
 
 if sys.version_info >= (3, 11):
     from typing import Self  # code is unreachable in <3.11
@@ -63,35 +58,31 @@ ADDR_TYPE_RANDOM = "random"
 
 BTLE_TIMEOUT = 32.1
 
-if LOG2JOURNAL:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[
-            logging.handlers.SysLogHandler(
-                address="/dev/log",
-                facility=logging.handlers.SysLogHandler.LOG_DAEMON,
-            )
-        ],
-    )
-    LOGGER: logging.Logger = logging.getLogger(__name__)
-    LOGGER.info("Starting bluepy3")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.handlers.SysLogHandler(
+            address="/dev/log",
+            facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+        )
+    ],
+)
+LOGGER: logging.Logger = logging.getLogger(__name__)
+LOGGER.info("Starting bluepy3")
 
 
 def DBG(*args) -> None:
     if Debugging:
+        if len(LOGGER.handlers) == 0:
+            LOGGER.addHandler(logging.StreamHandler(sys.stdout))
+            LOGGER.level = logging.DEBUG
+            LOGGER.debug("bluepy3 debugging started.")
         msg: str = " ".join([str(a) for a in args])
         if msg.count("hnd") > 2 and msg.count("uuid") > 2:
             msg = msg.replace("; hnd", ";\nhnd")
-        if LOG2JOURNAL:
-            if len(LOGGER.handlers) == 0:
-                LOGGER.addHandler(logging.StreamHandler(sys.stdout))
-                LOGGER.level = logging.DEBUG
-                LOGGER.debug("bluepy3 debugging started.")
-            LOGGER.debug(f"{msg}")
-        else:
-            print(msg)
+        LOGGER.debug(f"{msg}")
 
 
 # Exceptions
