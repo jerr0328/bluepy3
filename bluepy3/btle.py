@@ -1053,13 +1053,13 @@ class Scanner(Bluepy3Helper):
             return
         # Sometimes previous scan still ongoing
         if rsp["code"][0] == "busy":
-            self._mgmtCmd(self._cmd() + "end")
+            self._mgmtCmd(self._cmd() + " end")
             rsp = self._waitResp(["stat"])
             assert rsp["state"][0] == "disc"
             self._mgmtCmd(self._cmd())
 
     def stop(self) -> None:
-        self._mgmtCmd(self._cmd() + "end")
+        self._mgmtCmd(self._cmd() + " end")
         self._stopHelper()
 
 
