@@ -91,7 +91,7 @@ skips = [
 
 [tool.black]
 line-length = 98
-required-version = ">=3.9"
+required-version = "3.9"
 target-version = ["py39", "py310", "py311", "py312", "py313"]
 
 [tool.isort]
