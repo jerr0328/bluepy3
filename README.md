@@ -1,3 +1,4 @@
+![StaticBadge](https://img.shields.io/badge/support-limited_to_maintenance-yellow)
 
 [![License](https://img.shields.io/github/license/mausy5043/bluepy3)](LICENSE)
 [![PyPI version](https://img.shields.io/pypi/v/bluepy3.svg?logo=pypi&logoColor=FFE873)](https://pypi.org/project/bluepy3)
