@@ -12,6 +12,7 @@ Usage:
 """
 
 import argparse
+import contextlib
 import logging.handlers
 import os
 import platform
@@ -50,15 +51,21 @@ VERSION_H: str = f"{APP_ROOT}/version.h"
 PYPROJECT_TOML: str = f"{APP_ROOT}/pyproject.toml"
 
 # Configure the logging module
+handlers: list = []
+with contextlib.suppress(Exception):
+    handlers = [
+        logging.handlers.SysLogHandler(
+            address="/dev/log",
+            facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+        ),
+    ]
+
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(module)s.%(funcName)s [%(levelname)s] - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
-    handlers=[
-        logging.handlers.SysLogHandler(
-            address="/dev/log", facility=logging.handlers.SysLogHandler.LOG_DAEMON
-        )
-    ],
+    handlers=handlers,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -68,14 +75,17 @@ def get_btctl_version() -> str:
     """Return the bluetooth version (only on Linux)."""
     args: list[str] = ["bluetoothctl", "version"]
     try:
-        _exit_code = (
+        __exit_code = (
             subprocess.check_output(args, shell=False, encoding="utf-8", timeout=5.0)  # nosec B603
             .strip("\n")
             .strip("'")
         ).split()
+        _exit_code = __exit_code[1]
     except FileNotFoundError:
-        return "not installed"
-    return f"{_exit_code[1]}"
+        _exit_code = "not installed"
+    except subprocess.CalledProcessError as exc:
+        _exit_code = str(exc.output.split("\n")[0])
+    return f"{_exit_code}"
 
 
 def get_project_version() -> str:
