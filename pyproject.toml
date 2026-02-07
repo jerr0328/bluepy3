@@ -42,7 +42,7 @@ classifiers = [
     "Topic :: Home Automation"
 ]
 dependencies = [
-    "tomli==2.3.0",
+    "tomli==2.4.0",
 ]
 
 [project.urls]
