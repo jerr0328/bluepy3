@@ -15,7 +15,7 @@ version = "2.22.3"  # latest/current distribution version
 description = "A Python3 module for interfacing with Bluetooth LE devices on Linux."
 readme = "README.md"
 requires-python = ">=3.9"
-license = "MIT"
+license = "MIT AND AGPL-3.0-or-later"
 # license-files = { paths = ["LICENSE"] }
 authors = [
     { name="Mausy5043" },
@@ -29,8 +29,6 @@ keywords = [
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "License :: OSI Approved :: MIT License",
-    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
